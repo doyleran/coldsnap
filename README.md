@@ -8,6 +8,28 @@ It can be used to simplify snapshot handling in an automated pipeline.
 
 ## Usage
 
+### Credentials
+
+Coldsnap uses the same credential mechanisms as the `aws cli`.
+For example, if you have credentials in `~/.aws/credentials`, these will be used.
+You can specify the name of the profile to be used by adding `--profile profile-name`.
+
+You can also define environment variables, for example:
+
+```
+$ export AWS_ACCESS_KEY_ID=EXAMPLEAKIAIOSFODNN7
+$ export AWS_SECRET_ACCESS_KEY=EXAMPLEKEYwJalrXUtnFEMI/K7MDENG/bPxRfiCY
+$ export AWS_DEFAULT_REGION=us-west-2
+```
+
+If the name of a profile is provided, then it will be used.
+If not, then the default behavior of the AWS Rust SDK credential provider will be used.
+[Here] is the description of the default behavior.
+
+[Here]: https://docs.rs/aws-config/latest/aws_config/default_provider/credentials/struct.DefaultCredentialsChain.html
+
+### Upload
+
 Upload a local file into an EBS snapshot:
 
 ```
@@ -25,6 +47,8 @@ Alternately, you can use `coldsnap wait`, which offers more flexibility in terms
 ```
 $ coldsnap wait snap-1234
 ```
+
+### Download
 
 Download an EBS snapshot into a local file:
 
