@@ -69,3 +69,21 @@ pub use upload::SnapshotUploader;
 
 pub use wait::Error as WaitError;
 pub use wait::{SnapshotWaiter, WaitParams};
+
+/// Errors from the AWS Rust SDK crate often swallow relevant information when they are printed
+/// using `Display`. This leads to errors that do not have enough information for the user to know
+/// what went wrong. This function `Display` prints an error and recursively adds up to n levels of
+/// underlying errors to that printed message.
+pub(crate) fn error_stack(e: &dyn std::error::Error, n: u16) -> String {
+    let mut current_error = e;
+    let mut s = format!("{}", e);
+
+    for _ in 0..n {
+        current_error = match current_error.source() {
+            None => return s,
+            Some(next_error) => next_error,
+        };
+        s += &format!(": {}", current_error)
+    }
+    s
+}

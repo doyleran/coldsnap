@@ -470,7 +470,7 @@ mod error {
             source: std::io::Error,
         },
 
-        #[snafu(display("Failed to start snapshot: {}", source))]
+        #[snafu(display("Failed to start snapshot: {source}", source = crate::error_stack(&source, 2)))]
         StartSnapshot {
             source: aws_sdk_ebs::error::SdkError<StartSnapshotError>,
         },

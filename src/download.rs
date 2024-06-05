@@ -619,7 +619,7 @@ mod error {
         #[snafu(display("Missing temporary file"))]
         MissingTempFile {},
 
-        #[snafu(display("Failed to list snapshot blocks '{}': {}", snapshot_id, source))]
+        #[snafu(display("Failed to list snapshot blocks '{snapshot_id}': {source}", source = crate::error_stack(source, 2)))]
         ListSnapshotBlocks {
             snapshot_id: String,
             source: aws_sdk_ebs::error::SdkError<ListSnapshotBlocksError>,
