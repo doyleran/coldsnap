@@ -59,9 +59,9 @@ impl SnapshotUploader {
     /// Upload a snapshot from the file at the specified path.
     /// * `path` is the source file for the snapshot.
     /// * `volume_size` is the desired size in GiB. If no size is provided (`None`), the source
-    /// file's size will be rounded up to the nearest GiB and used instead.
+    ///   file's size will be rounded up to the nearest GiB and used instead.
     /// * `description` is the snapshot description. If no description is provided (`None`), the
-    /// source file's name will be used instead.
+    ///   source file's name will be used instead.
     /// * `progress_bar` is optional, since output to the terminal may not be wanted.
     pub async fn upload_from_file<P: AsRef<Path>>(
         &self,

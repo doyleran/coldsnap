@@ -52,8 +52,8 @@ impl SnapshotDownloader {
     /// Download a snapshot into the file at the specified path.
     /// * `snapshot_id` is the snapshot to download.
     /// * `path` is the destination file for the snapshot. It will be extended to the volume size
-    /// of the snapshot. If the snapshot is sparse, i.e. not all blocks are present, then the file
-    /// will contain holes that return zeroes when read.
+    ///   of the snapshot. If the snapshot is sparse, i.e. not all blocks are present, then the file
+    ///   will contain holes that return zeroes when read.
     /// * `progress_bar` is optional, since output to the terminal may not be wanted.
     pub async fn download_to_file<P: AsRef<Path>>(
         &self,
