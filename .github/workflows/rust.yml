@@ -34,7 +34,8 @@ jobs:
           key: ${{ hashFiles('.github/cache_bust') }}-${{ hashFiles('.github/workflows/rust.yml') }}-${{ runner.os }}-${{ matrix.features }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ hashFiles('.github/cache_bust') }}-${{ hashFiles('.github/workflows/rust.yml') }}-${{ runner.os }}-${{ matrix.features }}
-      - run: rustup default
+      # print the current rustc. replace stable to pin to a specific toolchain version.
+      - run: rustup default stable
       - run: rustup component add rustfmt
       - run: rustup component add clippy
       - run: cargo test --features ${{ matrix.features }} ${{ matrix.additional_flags }} --locked
