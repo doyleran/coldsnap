@@ -1,11 +1,4 @@
 [licenses]
-unlicensed = "deny"
-
-# Deny licenses unless they are specifically listed here
-copyleft = "deny"
-allow-osi-fsf-free = "neither"
-default = "deny"
-
 # We want really high confidence when inferring licenses from text
 confidence-threshold = 0.93
 
@@ -45,16 +38,18 @@ license-files = [
 multiple-versions = "deny"
 wildcards = "deny"
 
-skip-tree = [
+skip= [
     { name = "base64", version = "0.21" },
     { name = "http", version = "0.2" },
+    { name = "http-body", version = "0.4" },
+]
+
+skip-tree = [
     # windows-sys is not a direct dependency. mio and schannel
     # are using different versions of windows-sys. we skip the
     # dependency tree because windows-sys has many sub-crates
     # that differ in major version.
     { name = "windows-sys" },
-    # several dependencies are using an old version of bitflags
-    { name = "bitflags", version = "=1.3" },
 ]
 
 [sources]
