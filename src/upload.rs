@@ -6,7 +6,9 @@ Upload Amazon EBS snapshots.
 */
 
 use crate::block_device::get_block_device_size;
+use crate::UploadTagVec;
 use aws_sdk_ebs::primitives::ByteStream;
+use aws_sdk_ebs::types::Tag as EbsTag;
 use aws_sdk_ebs::types::{ChecksumAggregationMethod, ChecksumAlgorithm};
 use aws_sdk_ebs::Client as EbsClient;
 use base64::engine::general_purpose::STANDARD as base64_engine;
@@ -69,6 +71,7 @@ impl SnapshotUploader {
         volume_size: Option<i64>,
         description: Option<&str>,
         progress_bar: Option<ProgressBar>,
+        tags: UploadTagVec,
     ) -> Result<String> {
         let path = path.as_ref();
         let description = description.map(|s| s.to_string()).unwrap_or_else(|| {
@@ -103,7 +106,9 @@ impl SnapshotUploader {
 
         // Start the snapshot, which gives us the ID and block size we need.
         debug!("Uploading {}G to snapshot...", volume_size);
-        let (snapshot_id, block_size) = self.start_snapshot(volume_size, description).await?;
+        let (snapshot_id, block_size) = self
+            .start_snapshot(volume_size, description, tags.to_ebs_tags())
+            .await?;
         let file_blocks = (file_size + i64::from(block_size - 1)) / i64::from(block_size);
         let file_blocks =
             i32::try_from(file_blocks).with_context(|_| error::ConvertNumberSnafu {
@@ -251,12 +256,18 @@ impl SnapshotUploader {
     }
 
     /// Start a new snapshot and return the ID and block size for subsequent puts.
-    async fn start_snapshot(&self, volume_size: i64, description: String) -> Result<(String, i32)> {
+    async fn start_snapshot(
+        &self,
+        volume_size: i64,
+        description: String,
+        tags: Vec<EbsTag>,
+    ) -> Result<(String, i32)> {
         let start_response = self
             .ebs_client
             .start_snapshot()
             .volume_size(volume_size)
             .set_description(Some(description))
+            .set_tags(Some(tags))
             .set_timeout(Some(SNAPSHOT_TIMEOUT_MINUTES))
             .send()
             .await

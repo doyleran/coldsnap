@@ -58,12 +58,14 @@ waiter.wait_for_completed("snap-1234")
 
 mod block_device;
 mod download;
+mod tag;
 mod upload;
 mod wait;
 
 pub use download::Error as DownloadError;
 pub use download::SnapshotDownloader;
 
+pub use tag::TagVec as UploadTagVec;
 pub use upload::Error as UploadError;
 pub use upload::SnapshotUploader;
 

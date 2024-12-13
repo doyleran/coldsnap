@@ -11,7 +11,7 @@ use aws_sdk_ebs::Client as EbsClient;
 use aws_sdk_ec2::Client as Ec2Client;
 use aws_types::region::Region;
 use aws_types::SdkConfig;
-use coldsnap::{SnapshotDownloader, SnapshotUploader, SnapshotWaiter, WaitParams};
+use coldsnap::{SnapshotDownloader, SnapshotUploader, SnapshotWaiter, UploadTagVec, WaitParams};
 use env_logger::{Builder, Env};
 use indicatif::{ProgressBar, ProgressStyle};
 use log::{debug, LevelFilter};
@@ -89,12 +89,14 @@ async fn run() -> Result<()> {
 
             let progress_bar = build_progress_bar(upload_args.no_progress, "Uploading");
             debug!("Uploading {}", upload_args.file.display());
+            debug!("Using tags:\n{}", upload_args.tags);
             let snapshot_id = uploader
                 .upload_from_file(
                     &upload_args.file,
                     upload_args.volume_size,
                     upload_args.description.as_deref(),
                     progress_bar?,
+                    upload_args.tags,
                 )
                 .await
                 .context(error::UploadSnapshotSnafu)?;
@@ -272,6 +274,10 @@ struct DownloadArgs {
 struct UploadArgs {
     #[argh(positional)]
     file: PathBuf,
+
+    #[argh(option)]
+    /// the tags for the snapshot. Must be a json blob with the format '{{"string": "string"}}'
+    tags: UploadTagVec,
 
     #[argh(option)]
     /// the size of the volume
